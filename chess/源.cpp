@@ -161,6 +161,7 @@ void draw()
 void mouseEvent()
 {
 	ExMessage msg;//定义消息结构体变量
+
 	if (peekmessage(&msg, EM_MOUSE))
 	{
 		if (msg.message == WM_LBUTTONDOWN)//鼠标左键按下
@@ -186,14 +187,14 @@ void mouseEvent()
 				row++;
 			}
 			//printf("(%d %d)\n", row, col);
-
+			
 			if (state.state == BEGIN)
 			{
 				state.begr = row;
 				state.begc = col;
 				state.state = END;
 			}
-			else if (state.state == BEGIN)
+			else if (state.state == END)
 			{
 				state.endr = row;
 				state.endc = col;
@@ -213,7 +214,7 @@ void chessMove()
 	bool canMove = false;
 	//什么情况下可以移动棋子
 	if ((!(state.begr == state.endr && state.begc == state.endc)) &&//点击的不是同一个棋子
-		state.begc != -1 && state.begr != -1 &&//下标应合法
+		state.endr != -1 && state.begr != -1 &&//下标应合法
 		map[state.begr][state.begc].id != NONE )//&&//无棋子不可移动
 		//map[state.begr][state.begc].type != map[state.endr][state.endc].type)//不能吃自己
 	{
