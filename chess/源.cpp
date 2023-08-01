@@ -293,9 +293,28 @@ void chessMove()
 			break;
 		case 士:
 		case 仕:
+			if ((state.endr <= 2 || state.endr >= 7) && (state.endc >= 3 && state.endc <= 5))//九宫内
+			{
+				if (abs(state.begr - state.endr) == 1 && abs(state.begc - state.endc) == 1)//斜走一格
+				{
+					if (map[state.endr][state.endc].id == NONE ||
+						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						canMove = true;
+				}
+			}
 			break;
 		case 帅:		
 		case 将:
+			if ((state.endr <= 2 || state.endr >= 7) && (state.endc >= 3 && state.endc <= 5))//九宫内
+			{
+				if ((abs(state.begr - state.endr) == 1 || abs(state.begc - state.endc) == 1) && 
+					(abs(state.begr - state.endr)!= abs(state.begc - state.endc)))//直走一格
+				{
+					if (map[state.endr][state.endc].id == NONE ||
+						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						canMove = true;
+				}
+			}
 			break;
 		case 炮:		
 		case 砲:
