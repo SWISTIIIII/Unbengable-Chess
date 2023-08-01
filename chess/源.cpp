@@ -206,7 +206,39 @@ void mouseEvent()
 	}
 }
 
-
+//判断位置间棋子数量
+int hasBlock(struct State* state)
+{
+	int cnt = 0;
+	state->begr;
+	state->begc;
+	state->endr;
+	state->endc;
+	if (state->begr == state->endr)
+	{
+		for (size_t i = min(state->begc, state->endc)+1;i< max(state->begc, state->endc);i++)
+		{
+			if (map[state->begr][i].id != NONE)
+			{
+				cnt++;
+			}
+		}
+	}
+	else if (state->begc == state->endc)
+	{
+		for (size_t i = min(state->begr, state->endr) + 1; i < max(state->begr, state->endr); i++)
+		{
+			if (map[i][state->begc].id != NONE)
+			{
+				cnt++;
+			}
+		}
+	}
+	//判断水平方向和竖直方向
+	//遍历
+	//判断之间是否有棋子
+	return cnt;
+}
 //移动棋子
 void chessMove()
 {
@@ -224,8 +256,12 @@ void chessMove()
 		case 车:
 			if (state.begr==state.endr||state.begc==state.endc)
 			{
-				//起始点和结束点之间是否有阻碍
-				canMove = true;
+				if (hasBlock(&state) == 0)//起始点和结束点之间是否有阻碍
+				{
+					if ((map[state.endr][state.endc].id == NONE)|| //目标位置无棋子
+						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//目标位置有敌方棋子
+						canMove = true;
+				}
 			}
 			break;
 		case 馬:		
@@ -242,6 +278,13 @@ void chessMove()
 			break;
 		case 炮:		
 		case 砲:
+			if (state.begr == state.endr || state.begc == state.endc)
+			{
+				if ((hasBlock(&state) == 0 && map[state.endr][state.endc].id == NONE) || //平移
+					(hasBlock(&state) == 1 && map[state.endr][state.endc].id != NONE&& 
+						map[state.begr][state.begc].type != map[state.endr][state.endc].type))//吃子
+					canMove = true;
+			}
 			break;
 		case 兵:
 		case 卒:
