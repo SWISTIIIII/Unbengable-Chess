@@ -1,4 +1,4 @@
 ﻿  源.cpp
-C:\Users\wangwenjie\Desktop\程序\chess\源.cpp(126,42): warning C4267: “=”: 从“size_t”转换到“short”，可能丢失数据
 C:\Users\wangwenjie\Desktop\程序\chess\源.cpp(127,42): warning C4267: “=”: 从“size_t”转换到“short”，可能丢失数据
+C:\Users\wangwenjie\Desktop\程序\chess\源.cpp(128,42): warning C4267: “=”: 从“size_t”转换到“short”，可能丢失数据
   chess.vcxproj -> C:\Users\wangwenjie\Desktop\程序\chess\x64\Debug\chess.exe

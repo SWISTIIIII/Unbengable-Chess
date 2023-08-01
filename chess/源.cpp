@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include <graphics.h>
 
 #define ROW 10
@@ -210,10 +211,7 @@ void mouseEvent()
 int hasBlock(struct State* state)
 {
 	int cnt = 0;
-	state->begr;
-	state->begc;
-	state->endr;
-	state->endc;
+
 	if (state->begr == state->endr)
 	{
 		for (size_t i = min(state->begc, state->endc)+1;i< max(state->begc, state->endc);i++)
@@ -266,9 +264,32 @@ void chessMove()
 			break;
 		case 馬:		
 		case 马:
+			//if ((abs(state.begr - state.endr) == 1 && abs(state.begc - state.endc) == 2) ||
+				//(abs(state.begr - state.endr) == 2 && abs(state.begc - state.endc) == 1))//马走日
+			if ((state.begc - state.endc == 2 && abs(state.begr - state.endr) == 1 && map[state.begr][state.begc - 1].id == NONE) ||
+				(state.begc - state.endc == -2 && abs(state.begr - state.endr) == 1 && map[state.begr][state.begc + 1].id == NONE) ||
+				(state.begr - state.endr == 2 && abs(state.begc - state.endc) == 1 && map[state.begr - 1][state.begc].id == NONE) ||
+				(state.begr - state.endr == -2 && abs(state.begc - state.endc) == 1 && map[state.begr + 1][state.begc].id == NONE))//马走日且考虑别马腿情况
+			{
+				if (map[state.endr][state.endc].id == NONE ||
+					map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+					canMove = true;
+			}
 			break;
 		case 相:
 		case 象:
+			if ((state.begr <= 4 && state.endr <= 4) || state.begr > 4 && state.endr > 4)//不可过河
+			{
+				if ((state.begc - state.endc == 2 && state.begr - state.endr == 2 && map[state.begr - 1][state.begc - 1].id == NONE) ||
+					(state.begc - state.endc == 2 && state.begr - state.endr == -2 && map[state.begr + 1][state.begc - 1].id == NONE) ||
+					(state.begc - state.endc == -2 && state.begr - state.endr == 2 && map[state.begr - 1][state.begc + 1].id == NONE) ||
+					(state.begc - state.endc == -2 && state.begr - state.endr == -2 && map[state.begr + 1][state.begc + 1].id == NONE))//象走田
+				{
+					if (map[state.endr][state.endc].id == NONE || 
+						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						canMove = true;
+				}
+			}
 			break;
 		case 士:
 		case 仕:
