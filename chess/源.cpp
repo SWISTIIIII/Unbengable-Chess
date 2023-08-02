@@ -158,6 +158,26 @@ void draw()
 }
 
 
+
+
+
+
+//刷新鼠标信息
+// 
+// 
+//特定情况下出现棋子不合理位移
+//初步怀疑为endr,endc坐标信息对下一次begr,begc信息产生直接影响
+//
+// 
+//判断正确
+void refresh()
+{
+	state.endc = NONE;
+	state.endr = NONE;
+}
+
+
+
 //鼠标操作
 void mouseEvent()
 {
@@ -202,6 +222,7 @@ void mouseEvent()
 				state.state = BEGIN;
 			}
 			chessMove();
+			refresh();
 		}
 
 	}
@@ -237,6 +258,10 @@ int hasBlock(struct State* state)
 	//判断之间是否有棋子
 	return cnt;
 }
+
+//判断回合
+bool isRound = true;
+
 //移动棋子
 void chessMove()
 {
@@ -245,89 +270,313 @@ void chessMove()
 	//什么情况下可以移动棋子
 	if ((!(state.begr == state.endr && state.begc == state.endc)) &&//点击的不是同一个棋子
 		state.endr != -1 && state.begr != -1 &&//下标应合法
-		map[state.begr][state.begc].id != NONE )//&&//无棋子不可移动
+		map[state.begr][state.begc].id != NONE )//无棋子不可移动
 		//map[state.begr][state.begc].type != map[state.endr][state.endc].type)//不能吃自己
 	{
 		switch (map[state.begr][state.begc].id)
 		{
-		case 車:		
+
+
+		case 車:
+			if (isRound)
+			{
+				if (state.begr == state.endr || state.begc == state.endc)
+				{
+					if (hasBlock(&state) == 0)//起始点和结束点之间是否有阻碍
+					{
+						if ((map[state.endr][state.endc].id == NONE) || //目标位置无棋子
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type)//目标位置有敌方棋子
+						{
+							canMove = true;
+							isRound = false;
+						}
+
+					}
+				}
+			}
+			break;
 		case 车:
-			if (state.begr==state.endr||state.begc==state.endc)
+			if(!isRound)
 			{
-				if (hasBlock(&state) == 0)//起始点和结束点之间是否有阻碍
+				if (state.begr == state.endr || state.begc == state.endc)
 				{
-					if ((map[state.endr][state.endc].id == NONE)|| //目标位置无棋子
-						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//目标位置有敌方棋子
-						canMove = true;
+					if (hasBlock(&state) == 0)//起始点和结束点之间是否有阻碍
+					{
+						if ((map[state.endr][state.endc].id == NONE) || //目标位置无棋子
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type)//目标位置有敌方棋子
+						{
+							canMove = true;
+							isRound = true;
+						}
+
+					}
 				}
 			}
 			break;
-		case 馬:		
+
+
+
+		case 馬:
+			if (isRound)
+			{
+				//if ((abs(state.begr - state.endr) == 1 && abs(state.begc - state.endc) == 2) ||
+					//(abs(state.begr - state.endr) == 2 && abs(state.begc - state.endc) == 1))//马走日
+				if ((state.begc - state.endc == 2 && abs(state.begr - state.endr) == 1 && map[state.begr][state.begc - 1].id == NONE) ||
+					(state.begc - state.endc == -2 && abs(state.begr - state.endr) == 1 && map[state.begr][state.begc + 1].id == NONE) ||
+					(state.begr - state.endr == 2 && abs(state.begc - state.endc) == 1 && map[state.begr - 1][state.begc].id == NONE) ||
+					(state.begr - state.endr == -2 && abs(state.begc - state.endc) == 1 && map[state.begr + 1][state.begc].id == NONE))//马走日且考虑别马腿情况
+				{
+					if (map[state.endr][state.endc].id == NONE ||
+						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+					{
+						canMove = true;
+						isRound = false;
+					}
+				}
+			}
+			break;
 		case 马:
-			//if ((abs(state.begr - state.endr) == 1 && abs(state.begc - state.endc) == 2) ||
-				//(abs(state.begr - state.endr) == 2 && abs(state.begc - state.endc) == 1))//马走日
-			if ((state.begc - state.endc == 2 && abs(state.begr - state.endr) == 1 && map[state.begr][state.begc - 1].id == NONE) ||
-				(state.begc - state.endc == -2 && abs(state.begr - state.endr) == 1 && map[state.begr][state.begc + 1].id == NONE) ||
-				(state.begr - state.endr == 2 && abs(state.begc - state.endc) == 1 && map[state.begr - 1][state.begc].id == NONE) ||
-				(state.begr - state.endr == -2 && abs(state.begc - state.endc) == 1 && map[state.begr + 1][state.begc].id == NONE))//马走日且考虑别马腿情况
+			if (!isRound)
 			{
-				if (map[state.endr][state.endc].id == NONE ||
-					map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
-					canMove = true;
+				//if ((abs(state.begr - state.endr) == 1 && abs(state.begc - state.endc) == 2) ||
+					//(abs(state.begr - state.endr) == 2 && abs(state.begc - state.endc) == 1))//马走日
+				if ((state.begc - state.endc == 2 && abs(state.begr - state.endr) == 1 && map[state.begr][state.begc - 1].id == NONE) ||
+					(state.begc - state.endc == -2 && abs(state.begr - state.endr) == 1 && map[state.begr][state.begc + 1].id == NONE) ||
+					(state.begr - state.endr == 2 && abs(state.begc - state.endc) == 1 && map[state.begr - 1][state.begc].id == NONE) ||
+					(state.begr - state.endr == -2 && abs(state.begc - state.endc) == 1 && map[state.begr + 1][state.begc].id == NONE))//马走日且考虑别马腿情况
+				{
+					if (map[state.endr][state.endc].id == NONE ||
+						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+					{
+						canMove = true;
+						isRound = true;
+					}
+				}
 			}
 			break;
+
+
+
 		case 相:
+			if (isRound)
+			{
+				if ((state.begr <= 4 && state.endr <= 4) || state.begr > 4 && state.endr > 4)//不可过河
+				{
+					if ((state.begc - state.endc == 2 && state.begr - state.endr == 2 && map[state.begr - 1][state.begc - 1].id == NONE) ||
+						(state.begc - state.endc == 2 && state.begr - state.endr == -2 && map[state.begr + 1][state.begc - 1].id == NONE) ||
+						(state.begc - state.endc == -2 && state.begr - state.endr == 2 && map[state.begr - 1][state.begc + 1].id == NONE) ||
+						(state.begc - state.endc == -2 && state.begr - state.endr == -2 && map[state.begr + 1][state.begc + 1].id == NONE))//象走田
+					{
+						if (map[state.endr][state.endc].id == NONE ||
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						{
+							canMove = true;
+							isRound = false;
+						}
+					}
+				}
+			}
+			break;
 		case 象:
-			if ((state.begr <= 4 && state.endr <= 4) || state.begr > 4 && state.endr > 4)//不可过河
+			if (!isRound)
 			{
-				if ((state.begc - state.endc == 2 && state.begr - state.endr == 2 && map[state.begr - 1][state.begc - 1].id == NONE) ||
-					(state.begc - state.endc == 2 && state.begr - state.endr == -2 && map[state.begr + 1][state.begc - 1].id == NONE) ||
-					(state.begc - state.endc == -2 && state.begr - state.endr == 2 && map[state.begr - 1][state.begc + 1].id == NONE) ||
-					(state.begc - state.endc == -2 && state.begr - state.endr == -2 && map[state.begr + 1][state.begc + 1].id == NONE))//象走田
+				if ((state.begr <= 4 && state.endr <= 4) || state.begr > 4 && state.endr > 4)//不可过河
 				{
-					if (map[state.endr][state.endc].id == NONE || 
-						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
-						canMove = true;
+					if ((state.begc - state.endc == 2 && state.begr - state.endr == 2 && map[state.begr - 1][state.begc - 1].id == NONE) ||
+						(state.begc - state.endc == 2 && state.begr - state.endr == -2 && map[state.begr + 1][state.begc - 1].id == NONE) ||
+						(state.begc - state.endc == -2 && state.begr - state.endr == 2 && map[state.begr - 1][state.begc + 1].id == NONE) ||
+						(state.begc - state.endc == -2 && state.begr - state.endr == -2 && map[state.begr + 1][state.begc + 1].id == NONE))//象走田
+					{
+						if (map[state.endr][state.endc].id == NONE ||
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						{
+							canMove = true;
+							isRound = true;
+						}
+					}
 				}
 			}
 			break;
+
+
+
 		case 士:
+			if (isRound)
+			{
+				if ((state.endr <= 2 || state.endr >= 7) && (state.endc >= 3 && state.endc <= 5))//九宫内
+				{
+					if (abs(state.begr - state.endr) == 1 && abs(state.begc - state.endc) == 1)//斜走一格
+					{
+						if (map[state.endr][state.endc].id == NONE ||
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						{
+							canMove = true;
+							isRound = false;
+						}
+					}
+				}
+			}
+			break;
 		case 仕:
-			if ((state.endr <= 2 || state.endr >= 7) && (state.endc >= 3 && state.endc <= 5))//九宫内
+			if (!isRound)
 			{
-				if (abs(state.begr - state.endr) == 1 && abs(state.begc - state.endc) == 1)//斜走一格
+				if ((state.endr <= 2 || state.endr >= 7) && (state.endc >= 3 && state.endc <= 5))//九宫内
 				{
-					if (map[state.endr][state.endc].id == NONE ||
-						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
-						canMove = true;
+					if (abs(state.begr - state.endr) == 1 && abs(state.begc - state.endc) == 1)//斜走一格
+					{
+						if (map[state.endr][state.endc].id == NONE ||
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						{
+							canMove = true;
+							isRound = true;
+						}
+					}
 				}
 			}
 			break;
-		case 帅:		
+
+
+
+		case 帅:
+			if (isRound)
+			{
+				if ((state.endr <= 2 || state.endr >= 7) && (state.endc >= 3 && state.endc <= 5))//九宫内
+				{
+					if ((abs(state.begr - state.endr) == 1 || abs(state.begc - state.endc) == 1) &&
+						(abs(state.begr - state.endr) != abs(state.begc - state.endc)))//直走一格
+					{
+						if (map[state.endr][state.endc].id == NONE ||
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						{
+							canMove = true;
+							isRound = false;
+						}
+					}
+				}
+			}
+			break;
 		case 将:
-			if ((state.endr <= 2 || state.endr >= 7) && (state.endc >= 3 && state.endc <= 5))//九宫内
+			if (!isRound)
 			{
-				if ((abs(state.begr - state.endr) == 1 || abs(state.begc - state.endc) == 1) && 
-					(abs(state.begr - state.endr)!= abs(state.begc - state.endc)))//直走一格
+				if ((state.endr <= 2 || state.endr >= 7) && (state.endc >= 3 && state.endc <= 5))//九宫内
 				{
-					if (map[state.endr][state.endc].id == NONE ||
-						map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
-						canMove = true;
+					if ((abs(state.begr - state.endr) == 1 || abs(state.begc - state.endc) == 1) &&
+						(abs(state.begr - state.endr) != abs(state.begc - state.endc)))//直走一格
+					{
+						if (map[state.endr][state.endc].id == NONE ||
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+						{
+							canMove = true;
+							isRound = true;
+						}
+					}
 				}
 			}
 			break;
-		case 炮:		
-		case 砲:
-			if (state.begr == state.endr || state.begc == state.endc)
+
+
+
+		case 炮:
+			if (isRound)
 			{
-				if ((hasBlock(&state) == 0 && map[state.endr][state.endc].id == NONE) || //平移
-					(hasBlock(&state) == 1 && map[state.endr][state.endc].id != NONE&& 
-						map[state.begr][state.begc].type != map[state.endr][state.endc].type))//吃子
-					canMove = true;
+				if (state.begr == state.endr || state.begc == state.endc)
+				{
+					if ((hasBlock(&state) == 0 && map[state.endr][state.endc].id == NONE) || //平移
+						(hasBlock(&state) == 1 && map[state.endr][state.endc].id != NONE &&
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type))//吃子
+					{
+						canMove = true;
+						isRound = false;
+					}
+				}
 			}
 			break;
+		case 砲:
+			if (!isRound)
+			{
+				if (state.begr == state.endr || state.begc == state.endc)
+				{
+					if ((hasBlock(&state) == 0 && map[state.endr][state.endc].id == NONE) || //平移
+						(hasBlock(&state) == 1 && map[state.endr][state.endc].id != NONE &&
+							map[state.begr][state.begc].type != map[state.endr][state.endc].type))//吃子
+					{
+						canMove = true;
+						isRound = true;
+					}
+				}
+			}
+			break;
+
+
+
 		case 兵:
+			if (isRound)
+			{
+				if (map[state.begr][state.begc].type == RED)
+				{
+					if (state.begr <= 4)//过河
+					{
+						if ((state.begr - state.endr == 1 || abs(state.begc - state.endc) == 1) &&
+							(abs(state.begr - state.endr) != abs(state.begc - state.endc)))
+						{
+							if (map[state.endr][state.endc].id == NONE ||
+								map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+							{
+								canMove = true;
+								isRound = false;
+							}
+						}
+					}
+					else
+					{
+						if (state.begr - state.endr == 1 &&
+							abs(state.begr - state.endr) != abs(state.begc - state.endc))
+						{
+							if (map[state.endr][state.endc].id == NONE ||
+								map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+							{
+								canMove = true;
+								isRound = false;
+							}
+						}
+					}
+				}
+			}
+			break;
 		case 卒:
+			if (!isRound)
+			{
+				if (map[state.begr][state.begc].type == BLACK)
+				{
+					if (state.begr >= 5)//过河
+					{
+						if ((state.begr - state.endr == -1 || abs(state.begc - state.endc) == 1) &&
+							(abs(state.begr - state.endr) != abs(state.begc - state.endc)))
+						{
+							if (map[state.endr][state.endc].id == NONE ||
+								map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+							{
+								canMove = true;
+								isRound = true;
+							}
+						}
+					}
+					else
+					{
+						if (state.begr - state.endr == -1 &&
+							abs(state.begr - state.endr) != abs(state.begc - state.endc))
+						{
+							if (map[state.endr][state.endc].id == NONE ||
+								map[state.begr][state.begc].type != map[state.endr][state.endc].type)//仅可走至空处或敌方棋子处
+							{
+								canMove = true;
+								isRound = true;
+							}
+						}
+					}
+				}
+			}
+			
 			break;
 
 		default:
@@ -344,6 +593,10 @@ void chessMove()
 		}
 	}
 }
+
+
+
+
 
 
 int main()
