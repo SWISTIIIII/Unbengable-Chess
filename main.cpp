@@ -75,7 +75,7 @@ void next_state() { nextstate = (nextstate + 1) % 4; }
 void select(position pos)
 {
 	Chess* cur_che = map[pos.x][pos.y];
-	printp(cur_che->cur_p, "cur_chess:");
+	printp(pos, "cur_chess:");
 	printf("stateb:%d\n", state);
 	switch (state) {
 	case R1:
@@ -114,16 +114,17 @@ int block_detect_stra(position targ)
 		for (int j = 1; j < 10; j++)
 		{
 			cur = pos_add(cur, direct[i]);
-			if (map[cur.x][cur.y] != &null_chess) num++;
 			if (equal(cur, targ))
 			{
 				flag = true;
 				break;
 			}
+			if (map[cur.x][cur.y] != &null_chess) num++;
 		}
 		if (flag) break;
 		else num = 0;
 	}
+	std::cout << num << std::endl;
 	return num;
 }
 

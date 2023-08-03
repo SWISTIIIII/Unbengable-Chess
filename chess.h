@@ -16,7 +16,7 @@
 #define B2 3
 
 enum tags {
-	che, xiang, ma, shi, pao, bing, jiang, che
+	che, xiang, ma, shi, pao, bing, jiang, null
 };
 
 const char* ChessName[] = { "車","馬","相","士","帅","炮","兵","车", "马", "象", "仕", "将", "砲", "卒" };
@@ -61,7 +61,8 @@ Chess* chess[32] = {
 
 void printp(position pos, std::string desc);
 void initMap();
-void init_chess(Chess* chess, const char* name, position init, DWORD type, vector2* capabilitys, int cap_num);
+int block_detect_stra(position targ);
+void init_chess(Chess* chess, const char* name, position init, DWORD type, vector2* capabilitys, int cap_num, tags tag);
 bool equal(position x, position y)
 {
 	if (x.x == y.x && x.y == y.y) return true;
@@ -86,7 +87,7 @@ void init()
 	init_chess(&cheb2, "車", position{ 8, 9 }, RED, get_chev(), 40, che);
 	init_chess(&cheb1, "車", position{ 0, 9 }, RED, get_chev(), 40, che);
 	//剩下的棋子填上
-	init_chess(&null_chess, "null", position{ 0, 9 }, GREEN, get_chev(), 40);
+	init_chess(&null_chess, "null", position{ 0, 9 }, GREEN, get_chev(), 40, null);
 	initMap();
 }
 
