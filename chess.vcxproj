@@ -131,7 +131,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chess.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="vector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="chess.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\chessboard.png" />
+    <Image Include="res\test.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
