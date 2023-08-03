@@ -45,6 +45,8 @@ bool chessMove(position target)
 		position vec = selected_chess->capabilitys[i];
 		if (equal(pos_add(vec, cur_pos), target))
 		{
+			if (block_detect_stra(target) && sc->tag == che) return false;
+			if (block_detect_stra(target) && sc->tag == pao) return true;
 			_move(target);
 			if (targ_chess != &null_chess) {
 				targ_chess->isDead = true;
@@ -85,6 +87,31 @@ void select(position pos)
 		break;
 	}
 	state = nextstate;
+}
+
+int block_detect_stra(position targ)
+{
+	position direct[4] = { position{1, 0}, position{0, 1}, position{-1, 0}, position{0, -1} };
+	int num = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		num = 0;
+		position cur = selected_chess->cur_p;
+		bool flag = false;
+		for (int j = 1; j < 10; j++)
+		{
+			cur = pos_add(cur, direct[i]);
+			if (map[cur.x][cur.y] != &null_chess) num++;
+			if (equal(cur, targ))
+			{
+				flag = true;
+				break;
+			}
+		}
+		if (flag) break;
+		else num = 0;
+	}
+	return num;
 }
 
 //Êó±ê²Ù×÷

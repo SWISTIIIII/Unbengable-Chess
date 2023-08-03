@@ -15,16 +15,20 @@
 #define B1 2
 #define B2 3
 
+enum tags {
+	che, xiang, ma, shi, pao, bing, jiang, che
+};
+
 const char* ChessName[] = { "車","馬","相","士","帅","炮","兵","车", "马", "象", "仕", "将", "砲", "卒" };
 struct Chess
 {
 	const char* chess_name;
+	tags tag;
 	DWORD type;//red or black
 	position cur_p;
 	position init_p;
 	bool isDead;
 	bool isRiver;
-	bool isSelected;
 	vector2* capabilitys;
 	short cap_num;
 };
@@ -77,17 +81,17 @@ int getspoty(Chess* chess) {
 
 void init() 
 {
-	init_chess(&cher1, "车", position{0, 0}, BLACK, get_chev(), 40);
-	init_chess(&cher2, "车", position{ 8, 0 }, BLACK, get_chev(), 40);
-	init_chess(&cheb2, "車", position{ 8, 9 }, RED, get_chev(), 40);
-	init_chess(&cheb1, "車", position{ 0, 9 }, RED, get_chev(), 40);
+	init_chess(&cher1, "车", position{ 0, 0 }, BLACK, get_chev(), 40, che);
+	init_chess(&cher2, "车", position{ 8, 0 }, BLACK, get_chev(), 40, che);
+	init_chess(&cheb2, "車", position{ 8, 9 }, RED, get_chev(), 40, che);
+	init_chess(&cheb1, "車", position{ 0, 9 }, RED, get_chev(), 40, che);
 	//剩下的棋子填上
 	init_chess(&null_chess, "null", position{ 0, 9 }, GREEN, get_chev(), 40);
 	initMap();
 }
 
 
-void init_chess(Chess* chess, const char* name, position init, DWORD type, vector2* capabilitys, int cap_num)
+void init_chess(Chess* chess, const char* name, position init, DWORD type, vector2* capabilitys, int cap_num, tags tag)
 {
 	chess->chess_name = name;
 	chess->cur_p = init;
@@ -97,7 +101,7 @@ void init_chess(Chess* chess, const char* name, position init, DWORD type, vecto
 	chess->isRiver = false;
 	chess->capabilitys = capabilitys;
 	chess->cap_num = cap_num;
-	chess->isSelected = false;
+	chess->tag = tag;
 }
 
 void initMap()
