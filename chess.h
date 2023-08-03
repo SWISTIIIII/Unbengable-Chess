@@ -2,6 +2,7 @@
 #include <graphics.h>
 #include "vector.h"
 #include<string>
+#include <iostream>
 
 #define tot_num 4
 #define ROW 10
@@ -106,4 +107,10 @@ void initMap()
 			map[i][j] = &null_chess;
 	for (int i = 0; i < tot_num; i++)
 		map[chess[i]->cur_p.x][chess[i]->cur_p.y] = chess[i];
+}
+
+void printp(position pos, std::string desc)
+{
+	std::cout << desc << ' ';
+	printf("(%d, %d)\n", pos.x, pos.y);
 }

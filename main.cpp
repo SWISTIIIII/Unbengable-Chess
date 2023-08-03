@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "chess.h"
-#include <iostream>
 
 int state = 0;
 int nextstate = 0;
@@ -30,16 +29,9 @@ void _move(position targ)
 {
 	position cur_p = selected_chess->cur_p;
 	selected_chess->cur_p = targ;
-	std::cout << selected_chess->chess_name << std::endl;
 	map[cur_p.x][cur_p.y] = &null_chess;
 	map[targ.x][targ.y] = selected_chess;
 	selected_chess = &null_chess;
-}
-
-void printp(position pos, std::string desc)
-{
-	std::cout << desc << ' ';
-	printf("(%d, %d)\n", pos.x, pos.y);
 }
 
 bool chessMove(position target)
@@ -68,7 +60,6 @@ void next_state() { nextstate = (nextstate + 1) % 4; }
 void select(position pos)
 {
 	Chess* cur_che = map[pos.x][pos.y];
-	//printf("%d map: %d\n", cur_che, map[pos.x][pos.y]);
 	printp(cur_che->cur_p, "cur_chess:");
 	printf("stateb:%d\n", state);
 	switch (state) {
@@ -94,7 +85,6 @@ void select(position pos)
 		break;
 	}
 	state = nextstate;
-	//printf("staten:%d\n", state);
 }
 
 //Êó±ê²Ù×÷
