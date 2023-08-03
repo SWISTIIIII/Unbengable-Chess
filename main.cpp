@@ -4,15 +4,13 @@
 int state = 0;
 int nextstate = 0;
 int end = 0;
-
-
 //绘制
 void draw()
 {
 	setfillcolor(RGB(252, 215, 162));
 	setlinestyle(PS_SOLID, 2);
 	//文字样式
-	settextstyle(30, 0, "楷体");
+	settextstyle(30, 0, LPCTSTR("楷体"));
 	setlinecolor(GREEN);
 	if(selected_chess != &null_chess)
 		fillcircle(getspotx(selected_chess), getspoty(selected_chess), 35);
@@ -23,7 +21,7 @@ void draw()
 			setlinecolor(chess[i]->type);
 			fillcircle(getspotx(chess[i]), getspoty(chess[i]), 30);
 			fillcircle(getspotx(chess[i]), getspoty(chess[i]), 25);
-			outtextxy(getspotx(chess[i]) - 15, getspoty(chess[i]) - 15, chess[i]->chess_name);
+			outtextxy(getspotx(chess[i]) - 15, getspoty(chess[i]) - 15, LPCTSTR(chess[i]->chess_name));
 		}
 	}
 }
@@ -75,7 +73,7 @@ bool chessMove(position target)
 			if (sc->tag == pao)
 			{
 				if ((block_detect_stra(target) == 1 && targ_chess != &null_chess) //炮的两种行为特判
-					|| !block_detect_stra(target));
+					|| (!block_detect_stra(target) && map[target.x][target.y] == &null_chess));
 				else return false;
 			}
 			if (sc->tag == ma || sc->tag == xiang) // 马和象的行为特判
@@ -192,7 +190,7 @@ int main()
 	init();
 	//贴棋盘
 	IMAGE img_board;
-	loadimage(&img_board, "./res/chessboard.png");
+	loadimage(&img_board, LPCTSTR("./res/chessboard.png"));
 	//双缓冲绘图，防止闪屏
 	BeginBatchDraw();
 	while (true)

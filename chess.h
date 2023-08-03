@@ -50,7 +50,7 @@ Chess* selected_chess = &null_chess;
 
 Chess* map[9][10] = {&null_chess};
 
-Chess* chess[32] = {
+Chess* chess[tot_num] = {
 	&cher1,&cher2,&cheb1,&cheb2,
 	& paor1,& paor2,& paob1,& paob2,
 	& jiangr,& jiangb,
