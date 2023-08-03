@@ -54,26 +54,6 @@ Chess* chess[32] = {
 	&zur1,&zur2,&zur3,&zur4,&zur5,&zub1,&zub2,&zub3,&zub4,&zub5
 };
 
-Chess* blackChess[16] = {
-	&cheb1,&cheb2,
-	&mab1,&mab2,
-	&shib1,&shib2,
-	&paob1,&paob2,
-	&xiangb1,&xiangb2,
-	&jiangb,
-	&zub1,&zub2,&zub3,&zub4,&zub5
-};
-
-Chess* redChess[16] = {
-	&cher1,&cher2,
-	&mar1,&mar2,
-	&shir1,&shir2,
-	&paor1,&paor2,
-	&xiangr1,&xiangr2,
-	&jiangr,
-	&zur1,&zur2,&zur3,&zur4,&zur5
-};
-
 void printp(position pos, std::string desc);
 void initMap();
 void init_chess(Chess* chess, const char* name, position init, DWORD type, vector2* capabilitys, int cap_num);
