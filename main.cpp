@@ -4,6 +4,7 @@
 int state = 0;
 int nextstate = 0;
 int end = 0;
+position direct[4] = { position{1, 0}, position{0, 1}, position{-1, 0}, position{0, -1} };
 
 //绘制
 void draw()
@@ -45,12 +46,24 @@ bool chessMove(position target)
 		position vec = selected_chess->capabilitys[i];
 		if (equal(pos_add(vec, cur_pos), target))
 		{
-			if (block_detect_stra(target) && sc->tag == che) return false;
-			if (block_detect_stra(target) && sc->tag == pao) return true;
-			_move(target);
-			if (targ_chess != &null_chess) {
-				targ_chess->isDead = true;
+			if (block_detect_stra(target) && sc->tag == che) return false; //车的阻塞特判
+			if (sc->tag == pao)
+			{
+				if ((block_detect_stra(target) == 1 && targ_chess != &null_chess) //炮的两种行为特判
+					|| !block_detect_stra(target));
+				else return false;
 			}
+			if (sc->tag == ma || sc->tag == xiang) // 马和象的行为特判
+			{
+				bool flag = true;
+				for (int j = 0; j < 4; i++)
+				{
+					position tmp = pos_add(sc->cur_p, direct[j]);
+					if (j == i / 2 || map[tmp.x][tmp.y] != &null_chess) return false;
+				}
+			}
+			_move(target);
+			if (targ_chess != &null_chess) targ_chess->isDead = true;
 			return true;
 		}
 	}
@@ -91,7 +104,7 @@ void select(position pos)
 
 int block_detect_stra(position targ)
 {
-	position direct[4] = { position{1, 0}, position{0, 1}, position{-1, 0}, position{0, -1} };
+	
 	int num = 0;
 	for (int i = 0; i < 4; i++)
 	{
