@@ -30,9 +30,27 @@ bool judge_jiang(position targ)
 {
 	Chess* sc = selected_chess;
 	if (sc->tag != jiang) return true;
-	if (targ.x < 3 || targ.x > 5) return false;
-	if (sc->tag == RED && targ.y < 7) return false;
-	if (sc->tag == BLACK && targ.y > 2) return false;
+	if (targ.x < 3 || targ.x > 5 || (targ.y < 7 && targ.y > 2)) return false;
+	return true;
+}
+
+bool judge_shi(position targ)
+{
+	Chess* sc = selected_chess;
+	if (sc->tag != shi) return true;
+	if (targ.x < 3 || targ.x > 5 || (targ.y < 7 && targ.y > 2)) return false;
+	return true;
+	return true;
+}
+
+bool judge_xiang(position targ)
+{
+	Chess* sc = selected_chess;
+	if (sc->tag != xiang) return true;
+	if (sc->type == RED && targ.y < 5) //过河检查
+		return false;
+	if (sc->type == BLACK && targ.y > 4)
+		return false;
 	return true;
 }
 
@@ -76,7 +94,16 @@ bool chessMove(position target)
 					|| (!block_detect_stra(target) && map[target.x][target.y] == &null_chess));
 				else return false;
 			}
-			if (sc->tag == ma || sc->tag == xiang) // 马和象的行为特判
+			if (sc->tag == ma) // 马的行为特判
+			{
+				bool flag = true;
+				for (int j = 0; j < 4; j++)
+				{
+					position tmp = pos_add(sc->cur_p, direct[j]);
+					if (j == i / 2 && map[tmp.x][tmp.y] != &null_chess) return false;
+				}
+			}
+			if (sc->tag == xiang) // 象的行为特判
 			{
 				bool flag = true;
 				for (int j = 0; j < 4; j++)
@@ -86,6 +113,8 @@ bool chessMove(position target)
 				}
 			}
 			if (!judge_jiang(target)) return false;
+			if (!judge_shi(target)) return false;
+			if (!judge_xiang(target)) return false;
 			if (!judge_zu(target)) return false;
 			_move(target);
 			if (targ_chess != &null_chess) targ_chess->isDead = true;
@@ -191,6 +220,9 @@ int main()
 	//贴棋盘
 	IMAGE img_board;
 	loadimage(&img_board, LPCTSTR("./res/chessboard.png"));
+	//结束界面
+	IMAGE img_gameover;
+	loadimage(&img_gameover, LPCTSTR("./res/test.png"));
 	//双缓冲绘图，防止闪屏
 	BeginBatchDraw();
 	while (true)
@@ -203,6 +235,8 @@ int main()
 		if (jiangb.isDead || jiangr.isDead) break;
 	}
 	EndBatchDraw();
-	//getchar();
+
+	putimage(189, 236, &img_gameover);
+	getchar();
 	return 0;
 }
