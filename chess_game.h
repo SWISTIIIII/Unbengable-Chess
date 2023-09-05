@@ -214,8 +214,6 @@ void mouseEvent()
 			//k * GRID_SIZE + INTERVAL=x
 			short col = (msg.x - INTERVAL / 2) / GRID_SIZE;
 			short row = (msg.y - INTERVAL / 2) / GRID_SIZE;
-			col = 7;
-			row = 7;
 			position targ = position{ col, row };
 			//printf("targ: %d %d\n", targ.x, targ. y);
 			select(targ);
